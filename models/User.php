@@ -67,6 +67,15 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
         return null;
     }
 
+    public static function findOne(string $username, string $password): User {
+        $user = self::findByUsername($username);
+        if ($user->validatePassword($password))
+            return $user;
+
+        return null;
+    }
+
+
     /**
      * {@inheritdoc}
      */

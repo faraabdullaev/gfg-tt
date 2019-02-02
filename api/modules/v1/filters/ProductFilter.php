@@ -53,7 +53,7 @@ class ProductFilter
     private function addModelParam(string $attr, $value)
     {
         if (!$this->model->hasAttribute($attr))
-            throw new InvalidArgumentException(`{$this->modelClass} has no attribute named "{$attr}".`);
+            throw new InvalidArgumentException("{$this->modelClass} has no attribute named \"{$attr}\".");
 
         $this->queryParams[$this->modelClass][$attr] = $value;
     }
@@ -66,7 +66,7 @@ class ProductFilter
             $value = $filter[1];
 
             if ($attr === 'brand') {
-                $this->addModelParam($attr, explode(',', $value));
+                $this->addModelParam($attr, array_map('trim', explode(',', $value)));
                 continue;
             }
 

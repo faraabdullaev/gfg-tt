@@ -15,6 +15,16 @@ use yii\data\ActiveDataProvider;
 class ProductSearch extends \app\models\Product
 {
 
+    public function rules()
+    {
+        return [
+            [['price'], 'number', 'min' => 0.0],
+            [['stock'], 'integer', 'min' => 0],
+            [['title'], 'string', 'max' => 255],
+            [['brand'], 'each', 'rule' => ['string', 'max' => 100]],
+        ];
+    }
+
     public function scenarios()
     {
         return Model::scenarios();
@@ -31,7 +41,7 @@ class ProductSearch extends \app\models\Product
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 2,
+                'pageSize' => 5,
             ],
         ]);
 

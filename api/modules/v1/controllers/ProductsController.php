@@ -2,6 +2,7 @@
 
 namespace app\api\modules\v1\controllers;
 
+use app\api\modules\v1\filters\ProductFilter;
 use app\api\modules\v1\models\ProductSearch;
 use Yii;
 use yii\filters\Cors;
@@ -23,7 +24,9 @@ class ProductsController extends Controller
     public function actionIndex()
     {
         $searchModel = new ProductSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $filter = new ProductFilter($searchModel, Yii::$app->request->queryParams);
+
+        $dataProvider = $searchModel->search($filter->getQueryParams());
 
         return $dataProvider;
     }

@@ -2,19 +2,29 @@
 
 namespace app\api\modules\v1\controllers;
 
-use yii\web\Controller;
+use app\api\modules\v1\models\ProductSearch;
+use Yii;
+use yii\filters\Cors;
+use yii\rest\Controller;
 
-/**
- * Default controller for the `api` module
- */
 class ProductsController extends Controller
 {
-    /**
-     * Renders the index view for the module
-     * @return string
-     */
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+
+        $behaviors['corsFilter'] = [
+            'class' => Cors::class,
+        ];
+
+        return $behaviors;
+    }
+
     public function actionIndex()
     {
-        return $this->render('index');
+        $searchModel = new ProductSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $dataProvider;
     }
 }

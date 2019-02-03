@@ -19,8 +19,8 @@ $this->title = 'Search Service Testing UI';
             'id' => 'search-form',
             'layout' => 'horizontal',
             'fieldConfig' => [
-                'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-                'labelOptions' => ['class' => 'col-lg-1 control-label'],
+                'template' => "{label}\n<div class=\"col-lg-4\">{input}</div>\n<div class=\"col-lg-4\">{error}</div>",
+                'labelOptions' => ['class' => 'col-lg-3 control-label'],
             ],
         ]); ?>
 

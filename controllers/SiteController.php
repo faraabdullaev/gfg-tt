@@ -2,13 +2,16 @@
 
 namespace app\controllers;
 
+use app\models\LoginForm;
+use app\models\Product;
+use app\models\ProductSearchForm;
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 
 class SiteController extends Controller
 {
@@ -19,11 +22,11 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'class' => AccessControl::class,
+                'only' => ['index', 'logout'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['index', 'logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -47,10 +50,6 @@ class SiteController extends Controller
             'error' => [
                 'class' => 'yii\web\ErrorAction',
             ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
         ];
     }
 
@@ -61,7 +60,20 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        /** @var User $user */
+        $user = Yii::$app->user->identity;
+
+        $model = new ProductSearchForm();
+        $model->basicAccessToken = base64_encode("{$user->username}:{$user->password}");
+
+        $sortFields = $model->getSortByFields();
+        $brands = ArrayHelper::map(Product::find()->distinct()->all(), 'brand', 'brand');
+
+        return $this->render('index', [
+            'model' => $model,
+            'brands' => $brands,
+            'sortFields' => $sortFields,
+        ]);
     }
 
     /**
@@ -96,33 +108,5 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
     }
 }
